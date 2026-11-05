@@ -268,14 +268,14 @@ footer img{display:block;height:48px;margin:0 auto 10px}
       cs.forEach(function(c){var k=CATS.indexOf(c);if(k>-1&&k<rk)rk=k});
       var pic=it.img?'<img src="'+it.img+'" alt="'+esc(it.name)+'" loading="lazy">':'<span class="ph">'+esc((it.name||"?").charAt(0).toUpperCase())+'</span>';
       return '<div class="card" data-s="'+esc((it.name+" "+it.desc+" "+(it.code||"")+" "+cs.join(" ")+" "+sl+" "+(THEMES[t]||"")).toLowerCase())+'" data-c="'+esc("|"+cs.join("|")+"|")+'" data-t="'+esc(t)+'" data-st="'+esc(sn)+'" data-r="'+rk+'">'+
-        '<a class="imglink" href="'+u+'" target="_blank" rel="noopener" aria-label="'+esc(it.name)+'">'+pic+'<span class="tag st-'+esc(sn)+'">'+esc(sl)+'</span>'+(nw?'<span class="new">New</span>':'')+'<span class="quick">View on '+esc(sl)+'</span></a>'+
+        '<a class="imglink" href="'+u+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" aria-label="'+esc(it.name)+'">'+pic+'<span class="tag st-'+esc(sn)+'">'+esc(sl)+'</span>'+(nw?'<span class="new">New</span>':'')+'<span class="quick">View on '+esc(sl)+'</span></a>'+
         '<div class="body">'+
         '<div class="prow">'+cs.map(function(c){return '<span class="price">'+esc(c)+'</span>'}).join("")+(edit?'<span class="chip">'+esc(THEMES[t]||t)+'</span>':'')+'</div>'+
-        '<h3><a href="'+u+'" target="_blank" rel="noopener">'+esc(it.name)+'</a></h3>'+
+        '<h3><a href="'+u+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">'+esc(it.name)+'</a></h3>'+
         '<div class="dom">'+dom(it.url)+'</div>'+
         '<p>'+esc(it.desc)+'</p>'+
         (it.code?'<div class="code">Item code: <b>'+esc(it.code)+'</b></div>':'')+
-        '<a class="btn" href="'+u+'" target="_blank" rel="noopener">View on '+esc(sl)+'</a>'+
+        '<a class="btn" href="'+u+'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">View on '+esc(sl)+'</a>'+
         (edit?'<div class="acts"><button class="edt" data-e="'+i+'">Edit</button><button class="del" data-i="'+i+'">Delete</button></div>':'')+
         '</div></div>';
     }).join("");
@@ -322,6 +322,7 @@ footer img{display:block;height:48px;margin:0 auto 10px}
     g("q").oninput=f;g("go").onclick=f;g("sort").onchange=f;
     var w=g("catWrap");
     w.onclick=function(e){var b=e.target.closest(".pill");if(!b)return;var k=b.getAttribute("data-g");st[k]=b.getAttribute("data-v");[].forEach.call(w.querySelectorAll('.pill[data-g="'+k+'"]'),function(x){x.className=x===b?"pill on":"pill"});a();f()};
+    document.addEventListener("click",function(e){var l=e.target.closest&&e.target.closest("a.imglink,.card h3 a,.card .btn");if(!l||!l.href)return;e.preventDefault();var w=null;try{w=window.open(l.href,"_blank","noopener,noreferrer")}catch(x){}if(!w)window.location.href=l.href});
     a();f();
   }
   $("catBox").innerHTML=CATS.map(function(c){return '<label class="ck"><input type="checkbox" value="'+esc(c)+'"> '+esc(c)+'</label>'}).join("");
@@ -465,6 +466,16 @@ footer img{display:block;height:48px;margin:0 auto 10px}
   $("tabHome").onclick=function(){show("home")};
   $("tabEdit").onclick=function(){show("edit")};
 
+
+  // Make store links always work: new tab first, same tab if the host blocks popups
+  function openStore(e){
+    var a=e.target.closest&&e.target.closest("a.imglink,.card h3 a,.card .btn");
+    if(!a||!a.href)return;
+    e.preventDefault();
+    var w=null;try{w=window.open(a.href,"_blank","noopener,noreferrer")}catch(x){}
+    if(!w)window.location.href=a.href;
+  }
+  document.addEventListener("click",openStore);
   render();
   // Edit tab is hidden. Press Ctrl+Alt+M to show or hide it.
   var editTab=$("tabEdit");
